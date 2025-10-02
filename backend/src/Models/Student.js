@@ -7,10 +7,9 @@ const academicProfileSchema = new Schema({
   resume: { type: String, trim: true }, 
   tags: [String], 
 }, { _id: false });  
-const studentSchema = new Schema({
-  name: { type: String, required: true, trim: true },
-  email: { type: String, required: true, unique: true, index: true, lowercase: true, trim: true },
 
+const studentSchema = new Schema({
+  // email:{type:String}, 
   branch: { type: String, required: true, trim: true },
   year: { type: Number, required: true, min: 1, max: 5 },
 
@@ -25,9 +24,9 @@ const studentSchema = new Schema({
   achievements: [{ type: Schema.Types.ObjectId, ref: 'Achievement' }],
   clubs: [{ type: Schema.Types.ObjectId, ref: 'Club' }],
 
-  createdBy: { type: String, default: 'admin' }, // who provisioned the account
+  createdBy: { type: String, default: 'admin' },  
 }, {
-  timestamps: true // adds createdAt and updatedAt
+  timestamps: true  
 });
 
 const Student = mongoose.model("Student", studentSchema);

@@ -1,11 +1,12 @@
 import express from "express";
-import { createFacultyAccount, createStudentAccount } from "../Controllers/createAccountController.js";
+import { createFacultyAccount, createStudentAccount } from "../Controllers/CreateAccountController.js";
+import {developerMiddleware} from "../Middlewares/developerMiddleware.js";
 
 const router = express.Router();
  
 
-router.post("/faculty", createFacultyAccount);
+router.post("/faculty",developerMiddleware, createFacultyAccount);
 
-router.post("/student", createStudentAccount);
+router.post("/student",developerMiddleware, createStudentAccount);
 
 export default router

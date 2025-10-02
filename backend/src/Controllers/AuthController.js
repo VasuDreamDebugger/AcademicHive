@@ -1,56 +1,25 @@
 import User from "../Models/User.js";
+import Developer from '../Models/Developer.js';
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import "dotenv/config"
 
+const generateToken =async(userId,res)=>{
 
-// export const signUp = async (req, res) => {
-//     const { fullName, email, password,loginType } = req.body;
-  
-//     if (!fullName && !email && !password && !loginType) {
-//       res.status(401).json({
-//         message: "All fields required",
-//       });
-//     }
-  
-//     const user = await User.findOne({ 
-//       $and: [
-//         { loginType },
-//         { $or: [ { email }, { fullName } ] }
-//       ]
-//     });
-//     if (user) {
-//       res.status(401).json({
-//         message: "User Already exists..",
-//       });
-//     }
-  
-//     const salt = await bcrypt.genSalt(10);
-//     const hasedPassword = await bcrypt.hash(password, salt);
-  
-//     const newUser = new User({
-//       fullName,
-//       email,
-//       password: hasedPassword,
-//       loginType,
-
-//     });
-//     await newUser.save();
-  
-//     if (newUser) {
-//       generateToken(newUser, res);
-  
-//       res.status(201).json({
-//         success: true,
-//         message: "User created..",
-//         data: newUser,
-//       });
-//     }
-  
+    const token =jwt.sign({userId},process.env.MY_SECRET_TOKEN,{expiresIn:"3d"});
     
-//   };
+    res.cookie("jwt",token,{
+        secure:process.env.NODE_ENV =="production" ? true:false,
+    }) 
+    console.log("token :",token);
+   
+}
+
 
 export const login= async(req,res)=>{
     const {email,password}=req.body;
-    const user=await User.findOne({email});
+    const user=await User.findOne({email}).populate("refId");
+
     if(!user){
         return res.status(401).json({message:"Invalid credentials"});
     }
@@ -58,4 +27,62 @@ export const login= async(req,res)=>{
     if(!isPasswordCorrect){
         return res.status(401).json({message:"Invalid credentials"});
     }
+    const token = generateToken(user._id,res);
+    const { password: _,refId, ...safeUser } = user.toObject();
+
+    res.status(200).json({
+        message:"login success",
+        token,
+        data:safeUser,
+        profile:refId
+    })
 } 
+
+export const devSignUp =async(req,res)=>{
+    try{
+        const {name,email,password}=req.body;
+        const devExist= await Developer.findOne({email});
+        if(devExist){
+            res.status(400).json({
+                message:"Developer already exists.."
+            });
+        }
+
+    const newDeveloper = new Developer({
+        name,
+        email,
+        password
+    });
+
+    await newDeveloper.save();
+    res.status(201).json({
+        message:"developer created successfully",
+        data:newDeveloper
+    })
+    }catch(error){
+        console.log(error.stack);
+    }
+
+}
+
+export const devLogin =async(req,res)=>{
+    const {email,password}=req.body;
+
+    const dev=await Developer.findOne({email,password});
+
+    if(dev){
+        // const token=jwt.sign({devId:dev._id},"MY_SECRET_TOKEN",{expiresIn:"3d"});
+        // res.cookie("jwt",token,{
+        //     secure:process.env.NODE_ENV =="production" ? true:false,
+        // })
+        generateToken(dev._id,res);
+        res.status(200).json({
+            data:dev
+        })
+    }
+    else{
+        res.status(400).json({
+            message:"Developer not found"
+        })
+    }
+}

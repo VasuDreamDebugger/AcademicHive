@@ -2,7 +2,7 @@ import mongoose from "mongoose";
  
 
 const userSchema = new mongoose.Schema({
-   username: {
+   name: {
     type: String,
     required: true,
     trim: true,
@@ -24,39 +24,36 @@ const userSchema = new mongoose.Schema({
 
   role: {
     type: String,
-    enum: ['Student', 'Faculty', 'Director', 'Placement'],
+    enum: ['Student', 'Faculty', 'Director', 'Placement','Examination','DSW','Developer'],
     required: true,
   },
 
   loginType: {
     type: String,
-    enum: ['Student', 'Faculty'],
+    enum: ['Student', 'Faculty','Developer'],
     required: true,
   },
 
   refId: {
     type: mongoose.Schema.Types.ObjectId,
-    refPath: 'loginType', // dynamically references Student or Faculty model
+    refPath: 'loginType',  
     required: true,
   },
 
   mustChangePassword: {
     type: Boolean,
-    default: true, // true for first login with dummy password
+    default: true, 
   },
 
-  lastLogin: {
-    type: Date,
-    default: null,
-  },
+  
 
   createdBy: {
     type: String,
-    default: 'admin', // or director who created the account
+    default: 'admin',  
   },
 
 }, {
-  timestamps: true // adds createdAt and updatedAt
+  timestamps: true  
 });
 
 const User = mongoose.model('User', userSchema);
