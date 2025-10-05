@@ -63,24 +63,24 @@ export const createStudentAccount = async (req, res) => {
   try {
     const { user, student } = req.body;
 
-    // Validate required fields
+   
     if (!user?.email || !user?.password || !student?.branch || !student?.year) {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
-    // Check for existing user
+     
     const userExists = await User.findOne({ email: user.email });
     if (userExists) {
-      return res.status(409).json({ message: "Student user already exists" });
+      return res.status(409).json({ message: "Student already exists" });
     }
 
-    //Create Student profile (no email or name here)
+     
     const newStudent = await Student.create({
       ...student,
       createdBy: "admin"
     });
 
-    // Create User account
+    
     const hashedPassword = await bcrypt.hash(user.password, 10);
     const newUser = await User.create({
       name:user.name,

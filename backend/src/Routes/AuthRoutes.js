@@ -1,9 +1,12 @@
 import express from "express";
-import {  login,devSignUp,devLogin } from "../Controllers/AuthController.js";
+import {  login,devSignUp,devLogin,getUser } from "../Controllers/AuthController.js";
+import {developerMiddleware} from "../Middlewares/developerMiddleware.js";
+
 
 const router = express.Router();
 
-//router.post("/signup", signUp);
+ 
+router.get("/user/me",developerMiddleware,getUser);
 router.post("/login", login);
 
 router.post("/signup/developer",devSignUp);

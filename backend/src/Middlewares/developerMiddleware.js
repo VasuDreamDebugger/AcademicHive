@@ -19,8 +19,8 @@ export const developerMiddleware = async (req, res, next) => {
       return res.status(403).json({ message: "Only developers can access this route" });
     }
 
-    req.developer = dev; // Attach dev to request for downstream use
-    next(); // ✅ Proceed to the protected route
+    req.developer = dev; 
+    next();  
 
   } catch (error) {
     console.error(error.stack);

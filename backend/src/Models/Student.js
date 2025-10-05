@@ -10,8 +10,8 @@ const academicProfileSchema = new Schema({
 
 const studentSchema = new Schema({
   // email:{type:String}, 
-  branch: { type: String, required: true, trim: true },
-  year: { type: Number, required: true, min: 1, max: 5 },
+  branch: { type: String, required: true, trim: true ,enum:["CSE","ECE","EEE","MECH","CE"]},
+  year: { type: Number, required: true, min: 1, max: 4 },
 
   academicProfiles: [academicProfileSchema],
 

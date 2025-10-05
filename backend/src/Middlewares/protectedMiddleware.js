@@ -1,5 +1,5 @@
 
-export const protectedMiddleware =async(req,res)=>{
+export const protectedMiddleware =async(req,res,next)=>{
    try{
      const token =req.cookies.jwt;
      console.log("middleware token",token);

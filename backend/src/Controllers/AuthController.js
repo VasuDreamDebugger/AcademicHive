@@ -17,8 +17,8 @@ const generateToken =async(userId,res)=>{
 
 
 export const login= async(req,res)=>{
-    const {email,password}=req.body;
-    const user=await User.findOne({email}).populate("refId");
+    const {email,password,loginType}=req.body;
+    const user=await User.findOne({email,loginType}).populate("refId");
 
     if(!user){
         return res.status(401).json({message:"Invalid credentials"});
@@ -67,22 +67,40 @@ export const devSignUp =async(req,res)=>{
 
 export const devLogin =async(req,res)=>{
     const {email,password}=req.body;
-
+    console.log("email",email); 
     const dev=await Developer.findOne({email,password});
 
-    if(dev){
-        // const token=jwt.sign({devId:dev._id},"MY_SECRET_TOKEN",{expiresIn:"3d"});
-        // res.cookie("jwt",token,{
-        //     secure:process.env.NODE_ENV =="production" ? true:false,
-        // })
-        generateToken(dev._id,res);
-        res.status(200).json({
+    if(!dev){
+       return res.status(400).json({
+        
+        message:"Developer not found"
+       })
+       
+    }
+
+    generateToken(dev._id,res);
+    res.status(200).json({
+             message:"Hello Developer..!",
             data:dev
         })
-    }
-    else{
+}
+
+export const getUser =async(req,res)=>{
+    // const token =req.cookies.jwt;
+    // const verified =jwt.verify(token,process.env.MY_SECRET_TOKEN);
+    const developer = req.developer;
+    console.log("dev",developer);
+    if(!developer){
         res.status(400).json({
-            message:"Developer not found"
+            message:"Not logged In",
+            isLogged:false,
+           
         })
     }
+
+    res.status(200).json({
+        message:"Logged In",
+        isLogged:true,
+        dev:developer
+    })
 }
